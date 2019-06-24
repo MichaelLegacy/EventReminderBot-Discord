@@ -1,0 +1,22 @@
+{
+  "name": "hackweekbottest",
+  "version": "1.0.0",
+  "description": "Simple bot test repo for Discord Hack Week",
+  "main": "start.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MichaelLegacy/HackWeekBotTest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MichaelLegacy/HackWeekBotTest/issues"
+  },
+  "homepage": "https://github.com/MichaelLegacy/HackWeekBotTest#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  }
+}
