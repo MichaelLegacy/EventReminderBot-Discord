@@ -11,7 +11,7 @@ client.on('message', message => {
 });
 
 client.on('messageReactionAdd', (reaction, user) => {
-  console.log("User: " + user.username + " added reaction: " + reaction.emoji.name + " to the message: " + reaction.message);
+  console.log("User: " + user.username + " added reaction: " + reaction.emoji.name + "  to the message: " + reaction.message);
 });
 
 client.login(token);
