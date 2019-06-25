@@ -1,12 +1,28 @@
 const token = require('./token.js'); //Discord API token
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const config = require('./config/config.json');
+var mysql = require('mysql');
 
 client.on('ready', () => {
+  // connect to database
+  var con = mysql.createConnection({
+    host: config.database.host,
+    user: config.database.user,
+    password: config.database.password
+  });
+
+  // ensure connection is there
+  con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected to database");
+  })
+  
   console.log("Bot Connected");
 });
 
 client.on('message', message => {
+
   console.log("Message Received: " + message.content);
 
   //Dont respond to bot messages.

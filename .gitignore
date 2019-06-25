@@ -62,3 +62,4 @@ typings/
 
 #project specific files
 /token.js
+/config/config.json
