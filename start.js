@@ -1,24 +1,30 @@
 const token = require('./token.js'); //Discord API token
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const config = require('./config/config.json');
-var mysql = require('mysql');
+const Sequelize = require('sequelize');
+const SequelizeModels = require('./models');
 var moment = require('moment');
 
-client.on('ready', () => {
-  // connect to database
-  var con = mysql.createConnection({
-    host: config.database.host,
-    user: config.database.user,
-    password: config.database.password
+
+const SequelizeConnect = new Sequelize({
+    host: 'localhost',
+    dialect: 'mysql',
+    dialectOptions: {
+      charset: 'utf8mb4'
+    },
+    pool: {
+      max: 20,
+      min: 0,
+      idle: 10000
+    },
+    define: {
+      charset: 'utf8',
+      collate: 'utf8_general_ci',
+      timestamps: true
+    }
   });
 
-  // ensure connection is there
-  con.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected to database");
-  })
-  
+client.on('ready', () => {
   console.log("Bot Connected");
 });
 
@@ -41,42 +47,51 @@ client.on('message', message => {
     let regexString = /("[^"]+"|[^"\s]+)/g
     remainingMessage = remainingMessage.match(regexString);
     remainingMessage[0] = remainingMessage[0].replace(/^"([^"]+)"$/,"$1");
-    console.log(remainingMessage);
-    // console.log(message.id);
-    message.channel.send("Event Title: " + remainingMessage[0]);
-    message.channel.send("Event time from now (days-hours-minutes): " + remainingMessage[1]);
+    //console.log(remainingMessage);
+
+    //get neccessary data
+    let messageID = message.id;
+    let eventTitle = remainingMessage[0];
+    let creatorID = message.author.id;
+    let serverID = message.guild.id;
 
     // add the user time with message time
     regexString = /(\d)+/g
     userTime = remainingMessage[1].match(regexString);
-    // console.log(userTime);
+    //console.log(userTime);
     let messageTime = moment(message.createdAt);
-    // console.log(messageTime);
+    //console.log(messageTime);
     let eventTime = messageTime.add(userTime[0], 'days').add(userTime[1], 'hours').add(userTime[2], 'minutes');
-    // console.log(eventTime);
+    //console.log(eventTime);
 
     // make the role and assign to creator
-    let role = {};
     message.guild.createRole({
-      name: 'event:' + message.id,
+      name: 'event:' + messageID,
       mentionable: true
     }).catch(err => {
       console.error(err);
       message.channel.send('Error creating the role.');
     }).then(function(createdRole) {
-      role = createdRole;
-      message.member.addRole(role).catch(err => {
-      console.error(err);
-      message.channel.send('Error adding member to role.');
-    })});
-    // console.log(role);
-    // message.member.addRole(role).catch(err => {
-    //   console.error(err);
-    //   message.channel.send('Error adding member to role.');
-    // });
-    //con.query('insert into ? values(?,?,?,?,?,?)', [config.database.table, message.id, remainingMessage[0], localtime,])
-
-}
+      let roleID = createdRole.id;
+      message.member.addRole(roleID)
+        .catch(err => {
+          console.error(err);
+          message.channel.send('Error adding member to role.');
+        })
+      SequelizeModels.event.create({
+        messageID: messageID,
+        title: eventTitle,
+        creatorID: creatorID,
+        serverID: serverID,
+        roleID: roleID,
+        active: true,
+        time: eventTime
+      }).then((newEvent) => {
+          console.log('event created: ' + newEvent.eventTitle);
+      })
+        .catch(console.error);
+    });
+  }
 
 });
 
