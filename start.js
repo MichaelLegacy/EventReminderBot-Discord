@@ -24,6 +24,9 @@ const SequelizeConnect = new Sequelize({
     }
   });
 
+function setTimer(time) {
+
+}
 client.on('ready', () => {
   console.log("Bot Connected");
 
@@ -83,11 +86,6 @@ client.on('message', message => {
         message.channel.send('Error creating the role.');
       }).then(function(createdRole) {
         let roleID = createdRole.id;
-        message.member.addRole(roleID)
-          .catch(err => {
-            console.error(err);
-            message.channel.send('Error adding member to role.');
-          })
         SequelizeModels.event.create({
           messageID: messageID,
           title: eventTitle,
