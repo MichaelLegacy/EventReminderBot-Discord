@@ -24,8 +24,35 @@ const SequelizeConnect = new Sequelize({
     }
   });
 
-function setTimer(time) {
+function setTimer(time, id) {
+  console.log('start timer');
+  let startTime = moment();
+  let endTime = moment(time);
+  let timeToEvent = endTime.diff(startTime, 'seconds');
+  timeToEvent *= 1000;
+  setTimeout(endTimer, timeToEvent, id);
+}
 
+function endTimer(id) {
+  console.log('end timer');
+  SequelizeModels.event.findOne({
+    where: {
+      messageID: id
+    }}).then(eventMessage => {
+      if (eventMessage.active === true) {
+        let eventChannel = client.channels.get(eventMessage.channelID);
+        let eventServer = client.guilds.get(eventMessage.serverID);
+        let eventRole = eventServer.roles.get(eventMessage.roleID);
+        eventChannel.send('<@&' + eventMessage.roleID + '>: Event "**' + eventMessage.title + '**" is starting now!');
+        SequelizeModels.event.update(
+          { active: false },
+          {where: {
+            messageID: id
+          }
+        })
+        
+      }
+    })
 }
 client.on('ready', () => {
   console.log("Bot Connected");
@@ -96,7 +123,8 @@ client.on('message', message => {
           time: eventTime,
           channelID: channelID
         }).then((newEvent) => {
-            console.log('event created: ' + newEvent.eventTitle);
+            // console.log('event created: ' + newEvent.eventTitle);
+            setTimer(eventTime, messageID);
         })
           .catch(console.error);
       });
