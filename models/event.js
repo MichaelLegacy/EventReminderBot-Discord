@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
     time:{
       type: DataTypes.DATE,
       allowNull: false
+    },
+    channelID: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {});
   event.associate = function(models) {
