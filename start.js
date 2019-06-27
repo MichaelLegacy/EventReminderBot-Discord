@@ -26,6 +26,9 @@ const SequelizeConnect = new Sequelize({
 
 client.on('ready', () => {
   console.log("Bot Connected");
+
+  // fetch other messages
+
 });
 
 client.on('message', message => {
@@ -54,6 +57,7 @@ client.on('message', message => {
     let eventTitle = remainingMessage[0];
     let creatorID = message.author.id;
     let serverID = message.guild.id;
+    let channelID = message.channel.id;
 
     // add the user time with message time
     regexString = /(\d)+/g
@@ -85,7 +89,8 @@ client.on('message', message => {
         serverID: serverID,
         roleID: roleID,
         active: true,
-        time: eventTime
+        time: eventTime,
+        channelID: channelID
       }).then((newEvent) => {
           console.log('event created: ' + newEvent.eventTitle);
       })
@@ -97,6 +102,31 @@ client.on('message', message => {
 
 client.on('messageReactionAdd', (reaction, user) => {
   console.log("User: " + user.username + " added reaction: " + reaction.emoji.name + "  to the message: " + reaction.message);
+  
+  SequelizeModels.event.findOne({
+    where: {
+      messageID: reaction.message.id
+    }}).then(eventMessage => {
+      // console.log(event);
+      if (eventMessage != null) {
+        reaction.message.guild.fetchMember(user).then(eventMember => {
+          eventMember.addRole(eventMessage.roleID);
+      }).catch(console.error);
+    }}).catch(console.error);
+  });
+
+client.on('messageReactionRemove', (reaction, user) => {
+  console.log('User: ' + user.username + ' removed reaction: ' + reaction.emoji.name + ' to the message: ' + reaction.message);
+  
+  SequelizeModels.event.findOne({
+    where: {
+      messageID: reaction.message.id
+    }}).then(eventMessage => {
+      if (eventMessage != null) {
+        reaction.message.guild.fetchMember(user).then(eventMember => {
+          eventMember.removeRole(eventMessage.roleID);
+        }).catch(console.error);
+      }}).catch(console.error);
 });
 
 client.login(token);
