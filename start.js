@@ -26,7 +26,7 @@ const SequelizeConnect = new Sequelize({
   });
 
 function setTimer(time, id) {
-  console.log('start timer');
+  console.log('Event timer start');
   let startTime = moment();
   let endTime = moment(time);
   let timeToEvent = endTime.diff(startTime, 'seconds');
@@ -35,7 +35,7 @@ function setTimer(time, id) {
 }
 
 function endTimer(id) {
-  console.log('end timer');
+  console.log('Event timer end');
   SequelizeModels.event.findOne({
     where: {
       messageID: id
@@ -51,13 +51,17 @@ function endTimer(id) {
         embed.setThumbnail("https://i.imgur.com/d52hF2R.png");
 
         eventChannel.send('<@&' + eventMessage.roleID + '>', embed);
+        eventChannel.fetchMessage(eventMessage.messageID)
+        .then(message => {
         SequelizeModels.event.update(
           { active: false },
           {where: {
             messageID: id
           }
+          
         })
-        
+        message.edit('The event "' + eventMessage.title + '" has concluded.', embed.fields=null);
+        })
       }
     })
 }
@@ -244,20 +248,24 @@ client.on('message', message => {
       .then(eventMessage => {
         // console.log(eventMessage);
         let messageChannel = client.channels.get(eventMessage.channelID)
-        if (eventMessage.active === true ) {
-          messageChannel.fetchMessage(eventMessage.messageID)
-          .then((botMessage) => {
-            SequelizeModels.event.update (
-              { active: false },
-              { where: {
-                  messageID: id
-              }})
+        if ((eventMessage.creatorID === message.author.id) || message.member.hasPermission("ADMINISTRATOR")) {
+          if (eventMessage.active === true ) {
+            messageChannel.fetchMessage(eventMessage.messageID)
+            .then((botMessage) => {
+              SequelizeModels.event.update (
+                { active: false },
+                { where: {
+                    messageID: id
+                }})
 
-            messageChannel.send('Event "' + eventMessage.title + '" has been deleted.');
-            botMessage.delete()
-          })
+              messageChannel.send('Event "' + eventMessage.title + '" has been deleted.');
+              botMessage.delete()
+            })
+          } else {
+            messageChannel.send('Event "' + eventMessage.title + '" has already been removed or it has already occured.')
+          }
         } else {
-          messageChannel.send('Event "' + eventMessage.title + '" has already been removed or it has already occured.')
+          messageChannel.send("You don't have permission to delete that event.")
         }
       })
     }
