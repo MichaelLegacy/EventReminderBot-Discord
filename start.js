@@ -221,8 +221,31 @@ client.on('message', message => {
       }
       message.reply("Deleted " + deletedRoleCount + " inactive event roles.");
     })
+    } else if (lowerCaseMessage.startsWith(".deleteevent")) {
+      let id = lowerCaseMessage.split(' ')[1];
+      SequelizeModels.event.findOne({
+        where: {
+          messageID: id
+        }
+      })
+      .then(eventMessage => {
+        if (eventMessage != null) {
+          let messageChannel = client.channels.get(eventMessage.channelID)
+          messageChannel.fetchMessage(eventMessage.messageID)
+          .then((botMessage) => {
+            SequelizeModels.event.update (
+              { active: false },
+              { where: {
+                  messageID: id
+              }})
+
+            messageChannel.send('Event "' + eventMessage.title + '" has been deleted.');
+            botMessage.delete()
+          })
+        }
+      })
     }
-  });
+});
   
 client.on('messageReactionAdd', (reaction, user) => {
   console.log("User: " + user.username + " added reaction: " + reaction.emoji.name + "  to the message: " + reaction.message);
