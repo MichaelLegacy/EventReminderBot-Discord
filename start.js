@@ -5,6 +5,7 @@ const Sequelize = require('sequelize');
 const SequelizeModels = require('./models');
 var moment = require('moment');
 
+const checkMarkUnicode = "✅";
 
 const SequelizeConnect = new Sequelize({
     host: 'localhost',
@@ -54,11 +55,67 @@ function endTimer(id) {
       }
     })
 }
+
+// TODO if time allows: fix indentation and catch errors properly
 client.on('ready', () => {
   console.log("Bot Connected");
 
-  // fetch other messages
+  //Find all active events on restart
+  SequelizeModels.event.findAll({
+    where: {'active': true}
+  }).then(function(response) {
+    //for each active event fetch the associated message
+    for (let i in response) {
+        let loadedEvent = response[i].dataValues;
+        let messageChannel = client.channels.get(loadedEvent.channelID)
+        messageChannel.fetchMessage(loadedEvent.messageID)
+          .then((eventMessage) => {
+            // Filter to only the ✅ reaction (there's only 1)
+            let checkmarkReact = eventMessage.reactions
+              .filter(reaction => {
+                return reaction._emoji.name == checkMarkUnicode;
+            }).first();
+            //fetch the users that used the reaction
+            checkmarkReact.fetchUsers()
+              .then((reactionUsers) => {
+                for (let reactUserID of reactionUsers.keys()) {
+                    //get the user and the associated guildMember
+                    client.fetchUser(reactUserID)
+                      .then((user) =>{
+                          if (!user.bot) {
+                            eventMessage.guild.fetchMember(user)
+                              // add to the role if they don't have it
+                              .then((guildMember) => {
+                                  if (guildMember.roles.find(role => role.id === loadedEvent.roleID) == null){
+                                      guildMember.addRole(loadedEvent.roleID);
+                                  }
+                              });
+                          }
+                      });
+                };
+                // get role and check all users with the role
+                let eventRole = eventMessage.guild.roles.find(role => role.id == loadedEvent.roleID);
+                for (guildMember of eventRole.members) {
+                  let guildUser = guildMember[1].user;
 
+                  //get array of IDs only
+                  let reactionUserIDsArr = reactionUsers.map((reactionUser)=> {
+                      return reactionUser.id;
+                  });
+
+                  //remove role if user is not currently reacted to the event
+                  if (!reactionUserIDsArr.includes(guildUser.id)) {
+                      guildMember[1].removeRole(eventRole.id)
+                        .then((removedMember) => {
+                            console.log("A role Was Removed from: " + guildUser.username + " they removed their reaction.")
+                        })
+                        .catch(console.error);
+                  }
+                };
+              });
+            });
+    };
+  });
 });
 
 client.on('message', message => {
