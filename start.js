@@ -79,8 +79,7 @@ client.on('ready', () => {
               messageID: loadedEvent.messageID
             }
           })
-          messageChannel.send('<@&' + eventMessage.roleID + '>: Event "**' + eventMessage.title + '**" seems to have previously started and no announcement was made.')
-        } else {  
+          messageChannel.send('<@&' + loadedEvent.roleID + '>: Event "**' + loadedEvent.title + '**" seems to have previously started and no announcement was made.')        } else {  
           messageChannel.fetchMessage(loadedEvent.messageID)
           .then((eventMessage) => {
             // Filter to only the ✅ reaction (there's only 1)
@@ -200,8 +199,30 @@ client.on('message', message => {
         })
           .catch(console.error);
       });
-    })};
+    })} else if (lowerCaseMessage.startsWith(".deleteevent")) {
+      let id = lowerCaseMessage.split(' ')[1];
+      SequelizeModels.event.findOne({
+        where: {
+          messageID: id
+        }
+      })
+      .then(eventMessage => {
+        if (eventMessage != null) {
+          let messageChannel = client.channels.get(eventMessage.channelID)
+          SequelizeModels.event.update (
+            { active: false },
+            { where: {
+                messageID: id
+            }})
+
+          messageChannel.send('Event "' + eventMessage.title + '" has been deleted.')
+          }
+        })
+      }
   });
+  
+
+  
 
 client.on('messageReactionAdd', (reaction, user) => {
   console.log("User: " + user.username + " added reaction: " + reaction.emoji.name + "  to the message: " + reaction.message);
@@ -234,7 +255,7 @@ client.on('messageReactionRemove', (reaction, user) => {
         }).catch(console.error);
       }}).catch(console.error);
   }});
-        
+   
 
 
 client.login(token);
