@@ -152,6 +152,10 @@ client.on('message', message => {
       return;
   }
 
+  if (!message.member.roles.find(role => role.name.toLowerCase() === "eventbotplanner") && !message.member.hasPermission("ADMINISTRATOR")) {
+    return;
+  }
+
   let lowerCaseMessage = message.content.toLowerCase();
 
   // command looks like:
