@@ -164,7 +164,8 @@ client.on('message', message => {
     .then((embed) => {
       message.guild.createRole({
         name: 'event:' + messageID,
-        mentionable: true
+        mentionable: true,
+        permissions: 0
       }).catch(err => {
         console.error(err);
         message.channel.send('Error creating the role.');
