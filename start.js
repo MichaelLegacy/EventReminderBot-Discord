@@ -229,8 +229,9 @@ client.on('message', message => {
         }
       })
       .then(eventMessage => {
-        if (eventMessage != null) {
-          let messageChannel = client.channels.get(eventMessage.channelID)
+        // console.log(eventMessage);
+        let messageChannel = client.channels.get(eventMessage.channelID)
+        if (eventMessage.active === true ) {
           messageChannel.fetchMessage(eventMessage.messageID)
           .then((botMessage) => {
             SequelizeModels.event.update (
@@ -242,6 +243,8 @@ client.on('message', message => {
             messageChannel.send('Event "' + eventMessage.title + '" has been deleted.');
             botMessage.delete()
           })
+        } else {
+          messageChannel.send('Event "' + eventMessage.title + '" has already been removed or it has already occured.')
         }
       })
     }
