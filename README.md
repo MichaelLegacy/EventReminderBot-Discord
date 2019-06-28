@@ -45,3 +45,7 @@ Example command for a WoW Raid that is happening in 2 hours and 20 minutes from 
 This is only available to users with the Administrator role in the server. The event message should have the command in it, but just incase, you can perform this:
 
 `.deleteevent [eventMessageID]`
+
+**Signing Up For Event**
+
+To sign-up for the event, all you need to to is react to the "✅" emoji. This will assign you an event role that is used for notifying. To cancel the sign-up, just unreact with the message. All other reactions with emojis will not change your sign-up status
