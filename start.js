@@ -67,8 +67,21 @@ client.on('ready', () => {
     //for each active event fetch the associated message
     for (let i in response) {
         let loadedEvent = response[i].dataValues;
+        // make sure the event hasn't passed yet
+        let checkTime = loadedEvent.time;
+        let currTime = moment();
         let messageChannel = client.channels.get(loadedEvent.channelID)
-        messageChannel.fetchMessage(loadedEvent.messageID)
+        
+        if (currTime.isAfter(checkTime)) {
+          SequelizeModels.event.update(
+            { active: false },
+            { where: {
+              messageID: loadedEvent.messageID
+            }
+          })
+          messageChannel.send('<@&' + eventMessage.roleID + '>: Event "**' + eventMessage.title + '**" seems to have previously started and no announcement was made.')
+        } else {  
+          messageChannel.fetchMessage(loadedEvent.messageID)
           .then((eventMessage) => {
             // Filter to only the ✅ reaction (there's only 1)
             let checkmarkReact = eventMessage.reactions
@@ -114,8 +127,10 @@ client.on('ready', () => {
                 };
               });
             });
+        // set timers for active events
+        setTimer(loadedEvent.time, loadedEvent.messageID);
     };
-  });
+  }});
 });
 
 client.on('message', message => {
