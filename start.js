@@ -79,7 +79,7 @@ client.on('ready', () => {
               messageID: loadedEvent.messageID
             }
           })
-          messageChannel.send('<@&' + eventMessage.roleID + '>: Event "**' + eventMessage.title + '**" seems to have previously started and no announcement was made.')
+          messageChannel.send('<@&' + loadedEvent.roleID + '>: Event "**' + loadedEvent.title + '**" seems to have previously started and no announcement was made.')        
         } else {  
           messageChannel.fetchMessage(loadedEvent.messageID)
           .then((eventMessage) => {
@@ -223,7 +223,7 @@ client.on('message', message => {
     })
     }
   });
-
+  
 client.on('messageReactionAdd', (reaction, user) => {
   console.log("User: " + user.username + " added reaction: " + reaction.emoji.name + "  to the message: " + reaction.message);
   // only check for preset emoji
@@ -255,7 +255,7 @@ client.on('messageReactionRemove', (reaction, user) => {
         }).catch(console.error);
       }}).catch(console.error);
   }});
-        
+   
 
 
 client.login(token);
