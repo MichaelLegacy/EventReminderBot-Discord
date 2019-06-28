@@ -1,8 +1,9 @@
-# HackWeekBotTest
-Simple bot test repo for Discord Hack Week
+# Discord Hack Week Event Reminder Bot
+Simple bot for Discord Hack Week that will remind users of an event.
 
-Set this up and tested on Ubuntu 16.04.
-It should work on other Ubuntu versions or anywhere node runs at this point.
+Set up and tested on Ubuntu 16.04.
+It should work on other Ubuntu versions, similar linux distros or anywhere node runs at this point.
+Requires a mysqlDB. May add DB setup steps in the future if needed.
 
 1. Install Nodejs
  - I followed a guide and installed version 8.12.0, and npm 6.4.1
@@ -19,11 +20,14 @@ It should work on other Ubuntu versions or anywhere node runs at this point.
   
   4. Get your bot token from your application on https://discordapp.com/developers/applications/ and add it into token.js
   
-  5. Run bot with `node start.js`
-
+  5. Rename the \_config.json file to config.json and edit the database information to match your settings
+  
+  6. Run `sequelize db:migrate` or `node_modules/.bin/sequelize db:migrate` to setup the tables.
+  
+  6. Run bot with `node start.js`
 
 Don't have a better place to put this yet so saving it here for now as well.
-
-Ran the following command to ensure token.js with added API token does not get added to repo.
+Run the following command to ensure token.js with added API token does not get added to repo.
 `git update-index --skip-worktree token.js`
 
+Info on command usage coming soon.
