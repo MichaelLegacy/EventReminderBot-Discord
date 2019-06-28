@@ -185,7 +185,27 @@ client.on('message', message => {
         })
           .catch(console.error);
       });
-    })};
+    });
+    } else if ((lowerCaseMessage === ".removeinactiveroles") && message.member.hasPermission("ADMINISTRATOR")) {
+    //Find all active events on restart
+    let server = message.guild;
+    SequelizeModels.event.findAll({
+        where: {'active': false}
+    }).then(function(response) {
+      let deletedRoleCount = 0;
+      //for each active event fetch the associated message
+      for (let i in response) {
+        let loadedEvent = response[i].dataValues;
+        let eventRole = server.roles.find(role => role.id == loadedEvent.roleID);
+        if (eventRole) {
+          eventRole.delete("This role is inactive.");
+          console.log("Deleted inactive Role: " + eventRole.id);
+          deletedRoleCount++;
+        };
+      }
+      message.reply("Deleted " + deletedRoleCount + " inactive event roles.");
+    })
+    }
   });
 
 client.on('messageReactionAdd', (reaction, user) => {
