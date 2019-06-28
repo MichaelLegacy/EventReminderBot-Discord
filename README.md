@@ -30,4 +30,18 @@ Don't have a better place to put this yet so saving it here for now as well.
 Run the following command to ensure token.js with added API token does not get added to repo.
 `git update-index --skip-worktree token.js`
 
-Info on command usage coming soon.
+## Commands
+
+**Creating an Event**
+
+`.createevent "[event title]" [days]-[hours]-[minutes]`
+
+Example command for a WoW Raid that is happening in 2 hours and 20 minutes from now:
+
+`.createevent "Wow Raid" 0-2-20`
+
+**Deleting an Event**
+
+This is only available to users with the Administrator role in the server. The event message should have the command in it, but just incase, you can perform this:
+
+`.deleteevent [eventMessageID]`
