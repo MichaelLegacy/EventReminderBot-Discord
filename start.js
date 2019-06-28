@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const Sequelize = require('sequelize');
 const SequelizeModels = require('./models');
-var moment = require('moment');
+const moment = require('moment');
 
 const checkMarkUnicode = "✅";
 
@@ -43,8 +43,14 @@ function endTimer(id) {
       if (eventMessage.active === true) {
         let eventChannel = client.channels.get(eventMessage.channelID);
         let eventServer = client.guilds.get(eventMessage.serverID);
-        let eventRole = eventServer.roles.get(eventMessage.roleID);
-        eventChannel.send('<@&' + eventMessage.roleID + '>: Event "**' + eventMessage.title + '**" is starting now!');
+        let eventTitle = eventMessage.title;
+        let embed = new Discord.RichEmbed();
+        embed.setColor("#388e3c");
+        embed.setDescription("Event is starting now!");
+        embed.setAuthor(eventTitle, "https://i.imgur.com/ulaIAat.png");
+        embed.setThumbnail("https://i.imgur.com/d52hF2R.png");
+
+        eventChannel.send('<@&' + eventMessage.roleID + '>', embed);
         SequelizeModels.event.update(
           { active: false },
           {where: {
@@ -167,14 +173,21 @@ client.on('message', message => {
     let eventTime = messageTime.add(userTime[0], 'days').add(userTime[1], 'hours').add(userTime[2], 'minutes');
 
     // make the bot message
-    var embed = new Discord.RichEmbed();
-    embed.setTitle(eventTitle);
-    message.channel.send(embed)
+    let embed = new Discord.RichEmbed();
+    embed.setColor("#388e3c");
+    embed.setDescription("Use the ✅ reaction to be notified when this event is starting");
+    embed.setAuthor(eventTitle, "https://i.imgur.com/ulaIAat.png");
+    embed.setThumbnail("https://i.imgur.com/d52hF2R.png");
+    let footerMessage = "Event happening in " + userTime[0] + " Day(s) " + userTime[1] + " Hour(s) " + userTime[2] + " Minute(s)";
+    embed.setFooter(footerMessage);
+
+    message.channel.send("Event Scheduled", embed)
     .catch(console.error)
     .then((embedMessage) => {
       embedMessage.react('✅');
       messageID = embedMessage.id;
       console.log(messageID);
+      message.channel.send("The event creator can delete the event using `.deleteevent " + messageID + "`.");
     }).catch(console.error)
     .then((embed) => {
       message.guild.createRole({
