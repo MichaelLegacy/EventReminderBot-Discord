@@ -272,6 +272,30 @@ client.on('message', message => {
           messageChannel.send("You don't have permission to delete that event.")
         }
       })
+    } else if (lowerCaseMessage === ".help") {
+        message.channel.send({
+         "embed": {
+            "color": 16777215,
+            "author": {
+              "name": "Command List",
+              "icon_url": "https://i.imgur.com/ulaIAat.png"
+            },
+            "description": "To create an event, you must have a role named `eventbotplanner` or have the `Administrator` permission.",
+            "fields": [
+            {
+              "name": ".CreateEvent",
+              "value": "Use `.createevent \"[event title]\" [days]-[hours]-[minutes]` to create an event."
+            },
+            {
+              "name": ".DeleteEvent",
+              "value": "Event creator or admin can use `.deleteevent [eventMessageID]` to delete an event."
+            },
+            {
+              "name": ".RemoveInactiveRoles",
+              "value": "Server administrators may use this to remove all roles created for events that have already happened."
+            }]
+         }
+      });
     }
 });
   

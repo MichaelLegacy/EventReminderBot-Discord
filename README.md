@@ -36,18 +36,24 @@ Run the following command to ensure token.js with added API token does not get a
 
 To create an event, you must have a role named `eventbotplanner` or have the `Administrator` permission.
 
-`.createevent "[event title]" [days]-[hours]-[minutes]`
+`.CreateEvent "[event title]" [days]-[hours]-[minutes]`
 
 Example command for a WoW Raid that is happening in 2 hours and 20 minutes from now:
 
-`.createevent "Wow Raid" 0-2-20`
+`.CreateEvent "Wow Raid" 0-2-20`
 
 **Deleting an Event**
 
 To delete an event, you must be the event creator or have the `Administrator` permission. The event message should have the command in it, but just incase, you can perform this:
 
-`.deleteevent [eventMessageID]`
+`.DeleteEvent [eventMessageID]`
 
 **Signing Up For Event**
 
 To sign-up for the event, all you need to to is react to the "✅" emoji. This will assign you an event role that is used for notifying. To cancel the sign-up, just unreact with the message. All other reactions with emojis will not change your sign-up status
+
+**Removing Old Roles**
+
+This bot creates a role for each event. Once the event is over and the roles are no longer needed a user with `Administrator` permission can run this to remove them:
+
+`.RemoveInactiveRoles`
