@@ -34,7 +34,7 @@ Run the following command to ensure token.js with added API token does not get a
 
 **Creating an Event**
 
-To create an event, you must have a role named `eventbotplanner` or have the default `Administrator` role.
+To create an event, you must have a role named `eventbotplanner` or have the `Administrator` permission.
 
 `.createevent "[event title]" [days]-[hours]-[minutes]`
 
@@ -44,7 +44,7 @@ Example command for a WoW Raid that is happening in 2 hours and 20 minutes from 
 
 **Deleting an Event**
 
-To delete an event, you must be the event creator or have the Discord `Administrator` role. The event message should have the command in it, but just incase, you can perform this:
+To delete an event, you must be the event creator or have the `Administrator` permission. The event message should have the command in it, but just incase, you can perform this:
 
 `.deleteevent [eventMessageID]`
 
