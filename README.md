@@ -3,9 +3,8 @@ Simple bot for Discord Hack Week that will remind users of an event. Useful for 
 
 Set up and tested on Ubuntu 16.04.
 It should work on other Ubuntu versions, similar linux distros or anywhere node runs at this point.
-Requires a mysqlDB. May add DB setup steps in the future if needed.
 
-1. Install Nodejs
+1. Install Nodejs and setup database
  - I followed a guide and installed version 8.12.0, and npm 6.4.1
     ```
     cd ~
@@ -13,6 +12,8 @@ Requires a mysqlDB. May add DB setup steps in the future if needed.
     sudo apt-get install -y nodejs
     ```
   - Then confirm versions of node and npm with `node -v` and `npm -v`. 
+  
+  Also, the bot requires setting up a MySQL database and it be running. If you don't know how to, there are plenty of guides around :)
 
   2. Clone the Repository
   
