@@ -1,5 +1,5 @@
 # Discord Hack Week Event Reminder Bot
-Simple bot for Discord Hack Week that will remind users of an event.
+Simple bot for Discord Hack Week that will remind users of an event. Useful for gathering people together, such as for a game night!
 
 Set up and tested on Ubuntu 16.04.
 It should work on other Ubuntu versions, similar linux distros or anywhere node runs at this point.
