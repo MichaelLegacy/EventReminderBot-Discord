@@ -27,10 +27,6 @@ The bot requires setting up a MySQL database and it be running. If you don't kno
   
   6. Run bot with `node start.js`
 
-Don't have a better place to put this yet so saving it here for now as well.
-Run the following command to ensure token.js with added API token does not get added to repo.
-`git update-index --skip-worktree token.js`
-
 ## Commands
 
 **Creating an Event**
